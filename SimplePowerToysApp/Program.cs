@@ -17,7 +17,7 @@ namespace SimplePowerToysApp
         [STAThread]
         static void Main()
         {
-            ShowConsole.HideTheConsole();
+            // ShowConsole.HideTheConsole();
             Hooks.Hooks hooks = new Hooks.Hooks();
             _notifyIcon = new NotifyIcon()
             {

@@ -21,13 +21,10 @@ namespace SimplePowerToysApp.Hooks
         [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
         private WindowSwitcher switcher;
-        private Windows.WindowList windowList;
         public Hooks()
         {
             hookId = SetHook(HookCallback);
             switcher = new Forms.WindowSwitcher();
-            switcher.TopMost = true;
-            windowList = new Windows.WindowList();
         }
 
         public void Unhook()
@@ -52,7 +49,6 @@ namespace SimplePowerToysApp.Hooks
             if (nCode >= 0 && ((wParam == (IntPtr)WM_KEYDOWN) || wParam == (IntPtr) WM_SYSKEYDOWN ))
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-                Debug.WriteLine("vkCode " + vkCode);
                 // Check if Control + Alt + T is pressed
                 if ((Control.ModifierKeys & Keys.Control) != 0 &&
                     (Control.ModifierKeys & Keys.Alt) != 0)
@@ -73,18 +69,29 @@ namespace SimplePowerToysApp.Hooks
                 if ((Control.ModifierKeys & Keys.Alt) != 0 && vkCode == 0x20)
                 {
                     // Toggle WindowSwitcher form
-                    windowList.UpdateWindowList();
                     if (switcher.IsDisposed)
                     {
+                        Debug.WriteLine("WindowSwitcher is disposed");
                         switcher = new Forms.WindowSwitcher();
-                        switcher.TopMost = true;
                     }
-                    (new Windows.Window(IntPtr.Zero)).SwitchToWindow();
-                    switcher.Visible = !switcher.Visible;
-                    switcher.Center();
-                    switcher.Activate();
-                    switcher.FocusOnSearchBox();
-                    switcher.UpdateWindowsList(windowList.Windows);
+                    switcher.ToggleHideShow();
+                    // switcher.Visible = !switcher.Visible;
+                    return (IntPtr)1;
+                }
+                // if Control + Alt + Right arrow is pressed
+                if ((Control.ModifierKeys & Keys.Control) != 0 &&
+                                       (Control.ModifierKeys & Keys.Alt) != 0 &&
+                                                          vkCode == 0x27)
+                {
+                    Windows.Window.MoveCursorNextScreen();
+                    return (IntPtr)1;
+                }
+                // if Control + Alt + Left arrow is pressed
+                if ((Control.ModifierKeys & Keys.Control) != 0 &&
+                      (Control.ModifierKeys & Keys.Alt) != 0 &&
+                      vkCode == 0x25)
+                {
+                    Windows.Window.MoveCursorPreviousScreen();
                     return (IntPtr)1;
                 }
             }

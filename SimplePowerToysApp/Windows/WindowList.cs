@@ -113,7 +113,6 @@ namespace SimplePowerToysApp.Windows
                 {
                     continue;
                 }
-                Debug.WriteLine(wndTitle);
                 var window = new Window(wndHandle, wndTitle);
                 AddWindow(window);
             }

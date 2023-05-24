@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplePowerToysApp.Windows;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,25 +15,62 @@ namespace SimplePowerToysApp.Forms
 {
     public partial class WindowSwitcher : Form
     {
-        public List<Windows.Window> Windows { get; set; }
+        private bool HideForm = true;
+        public List<Windows.Window> Windows_ { get; set; }
         private Dictionary<string, IntPtr> windowMap = new Dictionary<string, IntPtr>();
-
+        Windows.WindowList windowList;
         public WindowSwitcher()
         {
             InitializeComponent();
 
             Visible = false;
+            TopMost = false;
             // centers in current screen
-            Center();
             textBox1.KeyDown += new KeyEventHandler(textBox1_KeyDown);
             listView1.DrawItem += new DrawListViewItemEventHandler(listView1_DrawItem);
             listView1.MultiSelect = false;
             listView1.OwnerDraw = true;
             listView1.HideSelection = true;
             listView1.HeaderStyle = ColumnHeaderStyle.None;
-
+            VisibleChanged += new EventHandler(WindowSwitcher_VisibleChanged);
+            windowList = new Windows.WindowList();
         }
 
+        public void ToggleHideShow()
+        {
+            HideForm = !HideForm;
+
+            if (HideForm)
+            {
+                // TopMost = false;
+                Hide();
+            }
+            else
+            {
+                // TopMost = true;
+                Show();
+                Center();
+                windowList.UpdateWindowList();
+                UpdateWindowsList(windowList.Windows);
+                FocusOnSearchBox();
+            }
+        }
+
+        private void WindowSwitcher_VisibleChanged(object sender, EventArgs e)
+        {
+            /*
+            if (Visible)
+            {
+                windowList.UpdateWindowList();
+                Center();
+                UpdateWindowsList(windowList.Windows);
+                FocusOnSearchBox();
+            }
+            else
+            {
+                ActiveControl = null;
+            } */
+        }
 
         private void SetSelected(int idx)
         {
@@ -64,7 +102,7 @@ namespace SimplePowerToysApp.Forms
             {
                 SetSelected(0);
             }
-            Windows = windows;
+            Windows_ = windows;
         }
 
         private void WindowSwitcher_Load(object sender, EventArgs e)
@@ -87,7 +125,7 @@ namespace SimplePowerToysApp.Forms
             string searchQuery = textBox1.Text.ToLower();
             listView1.BeginUpdate();
             listView1.Items.Clear();
-            foreach (var window in Windows)
+            foreach (var window in Windows_)
             {
                 if (window.Title.ToLower().Contains(searchQuery))
                 {
@@ -103,7 +141,6 @@ namespace SimplePowerToysApp.Forms
 
         private void listView1_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
-            Debug.WriteLine((e.State & ListViewItemStates.Selected) == ListViewItemStates.Selected);
             if (e.Item.Selected)
             {
                 e.Graphics.FillRectangle(Brushes.RoyalBlue, e.Bounds);
@@ -121,8 +158,14 @@ namespace SimplePowerToysApp.Forms
 
         public void FocusOnSearchBox()
         {
-            textBox1.Focus();
+            // Activate();
+            // BringToFront();
+            Windows.Window.SetForegroundWindow(Handle);
+            Windows.Window.SetFocus(Handle);
+            // Focus();
+            // textBox1.Focus();
         }
+
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.N)
