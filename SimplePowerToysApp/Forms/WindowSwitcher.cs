@@ -203,6 +203,11 @@ namespace SimplePowerToysApp.Forms
             else if (e.KeyCode == Keys.Enter)
             {
                 // Switch to the selected window
+                if (listView1.Items.Count == 0)
+                {
+                    return;
+                }
+
                 int currentSelectedIndex = listView1.SelectedIndices[0];
                 // get item
                 string windowTitle = listView1.Items[currentSelectedIndex].Text;

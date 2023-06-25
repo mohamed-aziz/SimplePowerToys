@@ -109,7 +109,7 @@ namespace SimplePowerToysApp.Windows
             {
                 var wndHandle = windowHandles[i];
                 var wndTitle = GetWindowTitle(wndHandle);
-                if (wndTitle == null || wndTitle == "")
+                if (wndTitle == null || wndTitle == "" || wndTitle.Equals("WindowSwitcher"))
                 {
                     continue;
                 }
