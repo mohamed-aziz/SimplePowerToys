@@ -10,4 +10,4 @@ I built this for my own use, because some stuff is missing from [PowerToys](http
 
 ### Feature request
 
-I don't accept feature requests, feel free to fork if you want. this is all I need. But please report bugs.
+I don't accept feature requests, feel free to fork if you want to add stuff yourself. This is all I need. But please report bugs.
