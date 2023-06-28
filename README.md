@@ -1,4 +1,4 @@
-## SimplePowerToys app
+# SimplePowerToys app
 
 I built this for my own use, because some stuff is missing from [PowerToys](https://learn.microsoft.com/en-us/windows/powertoys/) like window switcher and move mouse to other monitors.
 
