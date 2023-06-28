@@ -1,4 +1,5 @@
-﻿using SimplePowerToysApp.Windows;
+﻿using FuzzySharp;
+using SimplePowerToysApp.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -120,18 +121,29 @@ namespace SimplePowerToysApp.Forms
 
         }
 
+        private List<String> fuzzySearchWindows(String searchQ)
+        {
+            if (searchQ == "")
+            {
+                return Windows_.Select(x => x.Title).ToList();
+            }
+
+            return Windows_.Select(x => x.Title)
+                .OrderByDescending(x => Fuzz.PartialRatio(searchQ.ToLower(), x.ToLower()))
+                .Where(x=> Fuzz.PartialRatio(searchQ.ToLower(), x.ToLower()) > 70)
+                .ToList();
+        }
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             string searchQuery = textBox1.Text.ToLower();
             listView1.BeginUpdate();
             listView1.Items.Clear();
-            foreach (var window in Windows_)
+            foreach (var window in fuzzySearchWindows(searchQuery))
             {
-                if (window.Title.ToLower().Contains(searchQuery))
-                {
-                    listView1.Items.Add(window.Title);
-                }
+                listView1.Items.Add(window);
             }
+
             if (listView1.Items.Count > 0)
             {
                 listView1.Items[0].Selected = true;
